@@ -1,10 +1,8 @@
-import express from "express";
+import express from 'express';
 const app = express();
 
-
-app.get("/", (req, res) => {
-    res.send("Hello from Inputly!").status(200);
+app.get('/', (req, res) => {
+  res.send('Hello from Inputly!').status(200);
 });
-
 
 export default app;
