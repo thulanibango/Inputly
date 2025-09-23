@@ -85,6 +85,74 @@ npm run dev
 ```
 By default the server runs with: `node --watch src/index.js` (see `package.json`).
 
+## Docker
+
+This project includes first-class Docker support for both development with Neon Local and production with Neon Cloud.
+
+### Files
+- `Dockerfile` — Multi-stage container with `dev` and `prod` targets.
+- `docker-compose.dev.yml` — Runs the app and Neon Local proxy (for ephemeral branches) in development.
+- `docker-compose.prod.yml` — Runs the app only, connecting to Neon Cloud via `DATABASE_URL`.
+- `.env.development.example` — Template for local development.
+- `.env.production.example` — Template for production deployment.
+
+### Development with Neon Local
+Neon Local runs a local proxy to your Neon project and can create ephemeral branches for development/testing.
+
+1) Copy and fill your environment
+```
+cp .env.development.example .env.development
+# Set NEON_API_KEY, NEON_PROJECT_ID, optional PARENT_BRANCH_ID
+# Optionally adjust DATABASE_URL (service hostname must be `neon-local` inside compose)
+```
+
+2) Start the stack
+```
+docker compose -f docker-compose.dev.yml up --build
+```
+
+This brings up two services:
+- `neon-local` (image `neondatabase/neon_local:latest`) on port 5432
+- `app` (Inputly) on port 3000
+
+The app uses `DATABASE_URL=postgres://neon:npg@neon-local:5432/app?sslmode=require` inside the compose network. For JavaScript Postgres clients, Neon Local uses a self-signed certificate; ensure your driver config allows it (e.g., `ssl: { rejectUnauthorized: false }` if needed by your client library).
+
+3) Access the app
+```
+http://localhost:3000
+```
+
+Stop with Ctrl+C and remove containers if needed:
+```
+docker compose -f docker-compose.dev.yml down
+```
+
+### Production with Neon Cloud
+In production, connect directly to your Neon Cloud database. No Neon Local container is used.
+
+1) Copy and fill your environment
+```
+cp .env.production.example .env.production
+# Set DATABASE_URL to your Neon Cloud URL, e.g.
+# postgres://user:password@your-project-name.region.neon.tech/dbname?sslmode=require
+```
+
+2) Start the app
+```
+docker compose -f docker-compose.prod.yml up --build -d
+```
+
+This starts only the `app` service. Ensure your production infra handles TLS termination and secrets management appropriately. For orchestration (e.g., ECS, Kubernetes), use the same Dockerfile and inject environment variables via your platform’s secret store.
+
+### Switching environments
+- Development Compose reads from `.env.development` and sets `DATABASE_URL` to Neon Local by default.
+- Production Compose reads from `.env.production` and uses the Neon Cloud `DATABASE_URL` you provide.
+
+Environment precedence can be overridden by passing variables inline:
+```
+DATABASE_URL=postgres://... docker compose -f docker-compose.prod.yml up -d
+```
+
 ## API
 Base path may be `/auth` depending on how routes are mounted in your `src/index.js`/app setup. The route definitions are in `src/routes/auth.routes.js`.
 
@@ -183,6 +251,7 @@ Clears cookie: `token`.
 - ReferenceError about variables in controller catch blocks usually indicates trying to access try-scoped variables in catch; return generic info or pass data explicitly.
 - Ensure `DATABASE_URL` is correct and reachable; for Neon, enable IP allow rules if needed.
 - If cookie isn’t set in development, check domain/port and that you’re not mixing HTTPS/HTTP.
+- When using Neon Local, confirm your env has `NEON_API_KEY` and `NEON_PROJECT_ID`, and that your app uses the compose service hostname `neon-local` in `DATABASE_URL`.
 
 ## License
 ISC

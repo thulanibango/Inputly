@@ -16,13 +16,16 @@
   },
   "scripts": {
     "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "dev:docker": "sh ./src/scripts/dev.sh",
+    "prod:docker": "sh ./src/scripts/prod.sh"
   },
   "repository": {
     "type": "git",
