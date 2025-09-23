@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  neon-local:
+    image: neondatabase/neon_local:latest
+    container_name: inputly-local
+    env_file:
+      - .env.development
+    ports:
+      - '5432:5432'
+    # Persist proxy’s cache between restarts (optional)
+    volumes:
+      - neon-local-cache:/var/lib/neon-local
+
+  app:
+    build:
+      context: .
+      target: dev
+    container_name: inputly-dev
+    env_file:
+      - .env.development
+    ports:
+      - '3000:3000'
+    depends_on:
+      - neon-local
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  inputly-local-cache:
