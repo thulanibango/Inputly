@@ -38,3 +38,39 @@ export const createUser = async ({ name, email, password, role }) => {
         throw error;
     }
 }
+
+export const findUserByEmail = async (email) => {
+    try {
+        const results = await db
+            .select({ id: users.id, name: users.name, email: users.email, role: users.role, password: users.password, createdAt: users.createdAt })
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1);
+        return results[0] || null;
+    } catch (error) {
+        logger.error("Find user by email error", error);
+        throw error;
+    }
+}
+
+export const authenticateUser = async ({ email, password }) => {
+    try {
+        const user = await findUserByEmail(email);
+        if (!user) {
+            const err = new Error("Invalid credentials");
+            err.status = 401;
+            throw err;
+        }
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            const err = new Error("Invalid credentials");
+            err.status = 401;
+            throw err;
+        }
+        const { password: _pw, ...safeUser } = user;
+        return safeUser;
+    } catch (error) {
+        logger.error("Authenticate user error", error);
+        throw error;
+    }
+}
