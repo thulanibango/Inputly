@@ -1,0 +1,19 @@
+image:
+  repository: inputly-frontend
+  tag: local
+  pullPolicy: IfNotPresent
+
+service:
+  name: inputly-frontend
+  type: ClusterIP
+  port: 80
+
+replicas: 1
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi

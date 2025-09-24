@@ -28,4 +28,4 @@ COPY . .
 # EXPOSE runtime port
 EXPOSE 3000
 # Start server
-CMD ["node", "start"]
+CMD ["node", "src/index.js"]

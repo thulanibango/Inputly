@@ -27,7 +27,11 @@
     "db:studio": "drizzle-kit studio",
     "dev:docker": "sh ./src/scripts/dev.sh",
     "prod:docker": "sh ./src/scripts/prod.sh",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "k8s:setup": "bash ./src/scripts/minikube-setup.sh",
+    "k8s:build": "bash ./src/scripts/build-images.sh",
+    "k8s:deploy": "bash ./src/scripts/deploy-minikube.sh",
+    "k8s:destroy": "cd infra/terraform && terraform init -backend=false && terraform destroy -auto-approve"
   },
   "repository": {
     "type": "git",
