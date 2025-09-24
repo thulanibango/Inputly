@@ -51,8 +51,21 @@ terraform apply -auto-approve \
   -var="api_image_repository=$API_IMAGE_REPO" \
   -var="api_image_tag=$API_IMAGE_TAG" \
   -var="frontend_image_repository=$FE_IMAGE_REPO" \
-  -var="frontend_image_tag=$FE_IMAGE_TAG"
+  -var="frontend_image_tag=$FE_IMAGE_TAG" \
+  -var="grafana_host=${GRAFANA_HOST:-grafana.local}" \
+  -var="grafana_admin_password=${GRAFANA_PASSWORD:-admin123}" \
+  -var="monitoring_namespace=${MONITORING_NAMESPACE:-monitoring}" \
+  -var="prometheus_release_name=kube-prometheus-stack"
 
 echo "Deployment complete. Test with:"
 echo "  curl -H 'Host: $HOST' http://\$(minikube ip)/"
 echo "  curl -H 'Host: $HOST' http://\$(minikube ip)/api"
+echo ""
+echo "Monitoring stack deployed! Access Grafana at:"
+echo "  http://${GRAFANA_HOST:-grafana.local}"
+echo "  Username: admin"
+echo "  Password: ${GRAFANA_PASSWORD:-admin123}"
+echo ""
+echo "To access Grafana:"
+echo "  kubectl -n monitoring port-forward svc/kube-prometheus-stack-grafana 80:80"
+echo "  Then open: http://${GRAFANA_HOST:-grafana.local}"

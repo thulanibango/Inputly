@@ -30,6 +30,6 @@ probes:
     initialDelaySeconds: 5
     periodSeconds: 10
   readiness:
-    path: /health
+    path: /api
     initialDelaySeconds: 3
     periodSeconds: 5

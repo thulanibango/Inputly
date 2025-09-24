@@ -37,6 +37,14 @@ resource "helm_release" "inputly_api" {
         liveness  = { path = "/health", initialDelaySeconds = 5, periodSeconds = 10 }
         readiness = { path = "/health", initialDelaySeconds = 3, periodSeconds = 5 }
       }
+      metrics = {
+        enabled            = true
+        prometheusRelease  = var.prometheus_release_name
+        portName           = "http"
+        path               = "/metrics"
+        interval           = "15s"
+        scrapeTimeout      = "10s"
+      }
     })
   ]
 }

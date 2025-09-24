@@ -3,12 +3,16 @@ import logger from '#config/logger.js';
 import { slidingWindow } from '@arcjet/node';
 
 const securityMiddleware = async (req, res, next) => {
-  // Bypass security checks during tests to avoid noisy logs and bot detection failures
-  if (process.env.NODE_ENV === 'test') {
-    return next();
-  }
-  try {
-    const role = req.user?.role || 'guest';
+    // Bypass security checks during tests to avoid noisy logs and bot detection failures
+    if (process.env.NODE_ENV === 'test') {
+        return next();
+    }
+    // Allow Prometheus scraping endpoint
+    if (req.path === '/metrics') {
+        return next();
+    }
+    try {
+        const role = req.user?.role || 'guest';
 
     let limit;
 

@@ -258,3 +258,16 @@
 {"level":"info","message":"::1 - - [24/Sep/2025:15:03:44 +0000] \"GET /health HTTP/1.1\" 500 52 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T15:03:44.437Z"}
 {"level":"info","message":"::1 - - [24/Sep/2025:15:08:43 +0000] \"GET /health HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T15:08:43.643Z"}
 {"level":"info","message":"::ffff:127.0.0.1 - - [24/Sep/2025:15:10:12 +0000] \"GET /api HTTP/1.1\" 200 219 \"http://localhost:5173/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T15:10:12.217Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:15:58:13 +0000] \"GET /health HTTP/1.1\" 200 220 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T15:58:13.844Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:15:58:29 +0000] \"GET /api HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T15:58:29.678Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:15:58:29 +0000] \"GET /api HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T15:58:29.989Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:15:58:33 +0000] \"GET /api HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T15:58:33.934Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:15:58:38 +0000] \"GET /api HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T15:58:38.742Z"}
+{"level":"info","message":"Hello from Inputly!","service":"inputly","timestamp":"2025-09-24T16:33:08.969Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:16:33:08 +0000] \"GET / HTTP/1.1\" 200 19 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:33:08.977Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:16:33:16 +0000] \"GET /api HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:33:16.514Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:16:33:22 +0000] \"GET /users HTTP/1.1\" 404 45 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:33:22.744Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:16:33:34 +0000] \"GET /api/auth/users HTTP/1.1\" 404 45 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:33:34.388Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:16:34:22 +0000] \"GET /health HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:34:22.325Z"}
+{"email":"nextyeswsss@gmail.com","level":"info","message":"Login controller","service":"inputly","timestamp":"2025-09-24T16:34:37.332Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:16:34:37 +0000] \"POST /api/auth/login HTTP/1.1\" 200 148 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:34:37.337Z"}

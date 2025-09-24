@@ -51,3 +51,28 @@ variable "host" {
   type        = string
   default     = "inputly.local"
 }
+
+variable "monitoring_namespace" {
+  description = "Namespace to install monitoring stack (Prometheus/Grafana)"
+  type        = string
+  default     = "monitoring"
+}
+
+variable "grafana_host" {
+  description = "Ingress host for Grafana UI"
+  type        = string
+  default     = "grafana.local"
+}
+
+variable "grafana_admin_password" {
+  description = "Grafana admin password"
+  type        = string
+  sensitive   = true
+  default     = "admin123"
+}
+
+variable "prometheus_release_name" {
+  description = "Helm release name for kube-prometheus-stack"
+  type        = string
+  default     = "kube-prometheus-stack"
+}
