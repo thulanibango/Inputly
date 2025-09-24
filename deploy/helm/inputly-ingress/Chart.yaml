@@ -1,0 +1,6 @@
+apiVersion: v2
+name: inputly-ingress
+description: Ingress chart routing / to frontend and /api to backend
+version: 0.1.0
+appVersion: "1.0.0"
+type: application

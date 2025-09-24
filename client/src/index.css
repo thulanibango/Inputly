@@ -1,0 +1,10 @@
+* { box-sizing: border-box }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; background:#0b1020; color:#e8ecf1 }
+.container { max-width: 960px; margin: 0 auto; padding: 24px 16px }
+h1 { margin: 0 0 4px 0 }
+.muted { color:#a8b3cf }
+.ok { color:#66e0a3 }
+.card { background:#121a35; border:1px solid #1f2a52; border-radius:12px; padding:16px; margin:16px 0 }
+button { background:#1e2a5a; color:#e8ecf1; border:1px solid #2a3b7a; border-radius:8px; padding:8px 12px; cursor:pointer }
+button:hover { background:#223066 }
+code { background:#0e152b; border:1px solid #1f2a52; padding:2px 6px; border-radius:6px }
