@@ -1,10 +1,110 @@
-* { box-sizing: border-box }
-body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; background:#0b1020; color:#e8ecf1 }
-.container { max-width: 960px; margin: 0 auto; padding: 24px 16px }
-h1 { margin: 0 0 4px 0 }
-.muted { color:#a8b3cf }
-.ok { color:#66e0a3 }
-.card { background:#121a35; border:1px solid #1f2a52; border-radius:12px; padding:16px; margin:16px 0 }
-button { background:#1e2a5a; color:#e8ecf1; border:1px solid #2a3b7a; border-radius:8px; padding:8px 12px; cursor:pointer }
-button:hover { background:#223066 }
-code { background:#0e152b; border:1px solid #1f2a52; padding:2px 6px; border-radius:6px }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Glassmorphism styles */
+@layer components {
+  .glass {
+    @apply bg-white/20 backdrop-blur-lg border border-white/30 shadow-lg rounded-2xl;
+  }
+  
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl;
+  }
+  
+  .glass-button {
+    @apply bg-white/20 backdrop-blur-sm border border-white/30 shadow-md rounded-xl;
+    transition: all 0.3s ease;
+  }
+  
+  .glass-button:hover {
+    @apply bg-white/30 shadow-lg;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  }
+  
+  .glass-input {
+    @apply bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm rounded-lg;
+    transition: all 0.3s ease;
+  }
+  
+  .glass-input:focus {
+    @apply bg-white/15 border-white/40 shadow-md;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+  
+  .gradient-bg {
+    background: linear-gradient(135deg, 
+      #667eea 0%, 
+      #764ba2 25%, 
+      #f093fb 50%, 
+      #f5576c 75%, 
+      #4facfe 100%
+    );
+  }
+  
+  .gradient-bg-dark {
+    background: linear-gradient(135deg,
+      #0c0c0c 0%,
+      #1a1a2e 25%, 
+      #16213e 50%,
+      #0f3460 75%,
+      #533483 100%
+    );
+  }
+}

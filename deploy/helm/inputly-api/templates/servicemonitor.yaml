@@ -4,14 +4,13 @@ kind: ServiceMonitor
 metadata:
   name: {{ .Release.Name }}
   labels:
+    app: {{ .Release.Name }}
     release: {{ .Values.metrics.prometheusRelease | default "kube-prometheus-stack" | quote }}
 spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}
-  namespaceSelector:
-    matchNames:
-      - {{ .Release.Namespace }}
+      release: {{ .Values.metrics.prometheusRelease | default "kube-prometheus-stack" }}
   endpoints:
     - port: {{ .Values.metrics.portName | default "http" | quote }}
       path: {{ .Values.metrics.path | default "/metrics" | quote }}

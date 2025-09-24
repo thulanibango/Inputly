@@ -1,0 +1,915 @@
+openapi: 3.0.3
+info:
+  title: Inputly API
+  description: |
+    A modern, cloud-native user management system with enterprise-grade security,
+    comprehensive monitoring, and JWT-based authentication.
+    
+    ## Features
+    - JWT Authentication with HTTP-only cookies
+    - Role-based access control (user/admin)
+    - Rate limiting with Arcjet security
+    - Prometheus metrics collection
+    - Comprehensive health checks
+    
+    ## Authentication
+    This API uses JWT tokens for authentication. Tokens are delivered via:
+    - Authorization header: `Bearer <token>`
+    - HTTP-only cookie: `authToken` (recommended for web clients)
+    
+    ## Rate Limiting
+    - **Guest**: 5 requests per 2 seconds
+    - **User**: 10 requests per minute  
+    - **Admin**: 20 requests per minute
+  version: 1.0.0
+  contact:
+    name: Tulani Bango
+    url: https://github.com/thulanibango/Inputly
+    email: your-email@example.com
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: http://inputly.local
+    description: Minikube deployment
+  - url: https://your-domain.com
+    description: Production server
+
+paths:
+  /:
+    get:
+      summary: Get application status
+      description: Returns basic application status and information
+      tags:
+        - System
+      responses:
+        '200':
+          description: Application status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationStatus'
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Comprehensive health check with system metrics
+      tags:
+        - System
+      responses:
+        '200':
+          description: Health check information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+
+  /api:
+    get:
+      summary: API status endpoint
+      description: API-specific status information
+      tags:
+        - System
+      responses:
+        '200':
+          description: API status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIStatus'
+
+  /metrics:
+    get:
+      summary: Prometheus metrics
+      description: Application metrics in Prometheus format
+      tags:
+        - System
+      responses:
+        '200':
+          description: Prometheus metrics
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  # HELP http_requests_total Total number of HTTP requests
+                  # TYPE http_requests_total counter
+                  http_requests_total{method="GET",route="/",status_code="200"} 150
+
+  /api/auth/register:
+    post:
+      summary: Register new user
+      description: Create a new user account
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          headers:
+            Set-Cookie:
+              description: Authentication token cookie
+              schema:
+                type: string
+                example: authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+
+  /api/auth/login:
+    post:
+      summary: Login user
+      description: Authenticate an existing user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              description: Authentication token cookie
+              schema:
+                type: string
+                example: authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid request format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+
+  /api/auth/logout:
+    post:
+      summary: Logout user
+      description: End user session and clear authentication
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+        - CookieAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          headers:
+            Set-Cookie:
+              description: Clear authentication cookie
+              schema:
+                type: string
+                example: authToken=; HttpOnly; Secure; SameSite=Strict; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+
+  /api/users:
+    get:
+      summary: List users
+      description: Retrieve all users with pagination (admin only)
+      tags:
+        - User Management
+      security:
+        - BearerAuth: []
+        - CookieAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: search
+          in: query
+          description: Search by name or email
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: Filter by role
+          schema:
+            type: string
+            enum: [user, admin]
+        - name: sortBy
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [name, email, createdAt]
+            default: createdAt
+        - name: sortOrder
+          in: query
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '403':
+          description: Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+
+  /api/users/{id}:
+    get:
+      summary: Get user by ID
+      description: Retrieve a specific user by their ID (admin only)
+      tags:
+        - User Management
+      security:
+        - BearerAuth: []
+        - CookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '403':
+          description: Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+
+    put:
+      summary: Update user
+      description: Update an existing user's information (admin only)
+      tags:
+        - User Management
+      security:
+        - BearerAuth: []
+        - CookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '403':
+          description: Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+
+    delete:
+      summary: Delete user
+      description: Delete a user account (admin only)
+      tags:
+        - User Management
+      security:
+        - BearerAuth: []
+        - CookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteUserResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '403':
+          description: Admin role required or cannot delete yourself
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token authentication via Authorization header
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: authToken
+      description: JWT token authentication via HTTP-only cookie
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: User ID
+          example: 1
+        name:
+          type: string
+          description: User's full name
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "john@example.com"
+        role:
+          type: string
+          enum: [user, admin]
+          description: User's role
+          example: "user"
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: "2024-01-20T10:30:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2024-01-20T10:30:00.000Z"
+      required:
+        - id
+        - name
+        - email
+        - role
+        - createdAt
+        - updatedAt
+
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 255
+          description: User's full name
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          description: Email address (must be unique)
+          example: "john@example.com"
+        password:
+          type: string
+          minLength: 8
+          description: Password (minimum 8 characters)
+          example: "SecurePassword123!"
+        role:
+          type: string
+          enum: [user, admin]
+          description: User role (optional, defaults to 'user')
+          example: "user"
+          default: "user"
+      required:
+        - name
+        - email
+        - password
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: "john@example.com"
+        password:
+          type: string
+          description: Password
+          example: "SecurePassword123!"
+      required:
+        - email
+        - password
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 255
+          description: User's full name
+          example: "John Updated"
+        email:
+          type: string
+          format: email
+          description: Email address (must be unique)
+          example: "john.updated@example.com"
+        password:
+          type: string
+          minLength: 8
+          description: New password (minimum 8 characters)
+          example: "NewPassword123!"
+        role:
+          type: string
+          enum: [user, admin]
+          description: User role
+          example: "admin"
+
+    AuthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "User registered successfully"
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+
+    UserResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "User retrieved successfully"
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+
+    UsersListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "Users retrieved successfully"
+        data:
+          type: object
+          properties:
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+            pagination:
+              type: object
+              properties:
+                currentPage:
+                  type: integer
+                  example: 1
+                totalPages:
+                  type: integer
+                  example: 5
+                totalUsers:
+                  type: integer
+                  example: 47
+                hasNext:
+                  type: boolean
+                  example: true
+                hasPrev:
+                  type: boolean
+                  example: false
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+
+    DeleteUserResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "User deleted successfully"
+        data:
+          type: object
+          properties:
+            deletedUserId:
+              type: integer
+              example: 1
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+
+    LogoutResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "Logged out successfully"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+
+    ApplicationStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "Inputly is running"
+        data:
+          type: object
+          properties:
+            application:
+              type: string
+              example: "Inputly"
+            version:
+              type: string
+              example: "1.0.0"
+            environment:
+              type: string
+              example: "development"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+
+    HealthCheck:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "OK"
+        message:
+          type: string
+          example: "Inputly is running"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+        uptime:
+          type: number
+          description: Application uptime in seconds
+          example: 3600
+        memoryUsage:
+          type: object
+          properties:
+            rss:
+              type: number
+              description: Resident Set Size in bytes
+              example: 67108864
+            heapTotal:
+              type: number
+              description: Total heap size in bytes
+              example: 29360128
+            heapUsed:
+              type: number
+              description: Used heap size in bytes
+              example: 20971520
+            external:
+              type: number
+              description: External memory in bytes
+              example: 1638400
+        environment:
+          type: string
+          example: "development"
+        nodeVersion:
+          type: string
+          example: "v20.10.0"
+        pid:
+          type: integer
+          description: Process ID
+          example: 12345
+
+    APIStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "OK"
+        message:
+          type: string
+          example: "Inputly API is running"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+        uptime:
+          type: number
+          description: Application uptime in seconds
+          example: 3600
+        memoryUsage:
+          type: object
+          properties:
+            rss:
+              type: number
+              example: 67108864
+            heapTotal:
+              type: number
+              example: 29360128
+            heapUsed:
+              type: number
+              example: 20971520
+            external:
+              type: number
+              example: 1638400
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          description: Human-readable error message
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Error code
+            details:
+              type: string
+              description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-20T10:30:00.000Z"
+      required:
+        - status
+        - message
+        - timestamp
+
+    ValidationError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            message:
+              example: "Validation failed"
+            error:
+              type: object
+              properties:
+                code:
+                  example: "VALIDATION_ERROR"
+                details:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        example: "email"
+                      message:
+                        type: string
+                        example: "Invalid email format"
+
+    UnauthorizedError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            message:
+              example: "Authentication required"
+            error:
+              type: object
+              properties:
+                code:
+                  example: "UNAUTHORIZED"
+                details:
+                  example: "Please provide valid authentication credentials"
+
+    ForbiddenError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            message:
+              example: "Access denied"
+            error:
+              type: object
+              properties:
+                code:
+                  example: "FORBIDDEN"
+                details:
+                  example: "Admin role required for this operation"
+
+    NotFoundError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            message:
+              example: "Resource not found"
+            error:
+              type: object
+              properties:
+                code:
+                  example: "NOT_FOUND"
+                details:
+                  example: "The requested resource was not found"
+
+    ConflictError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            message:
+              example: "Resource already exists"
+            error:
+              type: object
+              properties:
+                code:
+                  example: "CONFLICT"
+                details:
+                  example: "Email already exists"
+
+    RateLimitError:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          properties:
+            message:
+              example: "Too many requests"
+            error:
+              type: object
+              properties:
+                code:
+                  example: "RATE_LIMIT_EXCEEDED"
+                details:
+                  example: "Rate limit of 10 requests per minute exceeded"
+                retryAfter:
+                  type: integer
+                  description: Seconds to wait before retrying
+                  example: 45
+
+tags:
+  - name: Authentication
+    description: User authentication and session management
+  - name: User Management
+    description: User CRUD operations (admin only)
+  - name: System
+    description: System status and health monitoring

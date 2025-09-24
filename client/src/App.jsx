@@ -1,40 +1,98 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { AuthPage } from './components/auth/AuthPage'
+import { Dashboard } from './components/dashboard/Dashboard'
+import { Loader2 } from 'lucide-react'
 
-export default function App() {
-  const [out, setOut] = useState('No request yet.')
-  const [ok, setOk] = useState(false)
+// Loading component
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen flex items-center justify-center gradient-bg">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className="inline-block"
+        >
+          <Loader2 className="w-12 h-12 text-white/80" />
+        </motion.div>
+        <motion.h2 
+          className="text-2xl font-semibold text-white mt-4"
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          Loading Inputly...
+        </motion.h2>
+      </motion.div>
+    </div>
+  )
+}
 
-  const callApi = async () => {
-    setOut('Loading...')
-    setOk(false)
-    try {
-      const res = await fetch('/api', { headers: { 'User-Agent': 'browser' }})
-      const text = await res.text()
-      setOut(text)
-      setOk(res.ok)
-    } catch (e) {
-      setOut('Error: ' + e.message)
-    }
+// Protected route component
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth()
+
+  if (loading) {
+    return <LoadingScreen />
   }
 
+  return isAuthenticated ? children : <Navigate to="/auth" replace />
+}
+
+// Public route component (redirect to dashboard if authenticated)
+function PublicRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth()
+
+  if (loading) {
+    return <LoadingScreen />
+  }
+
+  return !isAuthenticated ? children : <Navigate to="/dashboard" replace />
+}
+
+// App routes component
+function AppRoutes() {
   return (
-    <div className="container">
-      <h1>Inputly Frontend</h1>
-      <p className="muted">React (Vite) served by Nginx in Kubernetes</p>
-      <div className="card">
-        <h2>API Health Check</h2>
-        <p>Click to fetch from <code>/api</code> in the cluster.</p>
-        <button onClick={callApi}>Fetch /api</button>
-        <pre className={ok ? 'ok' : 'muted'}>{out}</pre>
-      </div>
-      <div className="card">
-        <h2>Endpoints</h2>
-        <ul>
-          <li><code>/</code> — this frontend</li>
-          <li><code>/api</code> — API JSON</li>
-          <li><code>/health</code> — API health</li>
-        </ul>
-      </div>
-    </div>
+    <AnimatePresence mode="wait">
+      <Routes>
+        <Route
+          path="/auth"
+          element={
+            <PublicRoute>
+              <AuthPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </AnimatePresence>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <AppRoutes />
+        </div>
+      </Router>
+    </AuthProvider>
   )
 }

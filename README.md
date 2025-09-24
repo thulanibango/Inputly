@@ -1,91 +1,472 @@
-# Inputly
- 
-A lightweight Node.js/Express authentication starter that uses Drizzle ORM with Postgres (Neon), Zod validation, JWT-based sessions stored in httpOnly cookies, and structured logging with Winston.
+# 🚀 Inputly
 
-## Features
-- **Register/Login/Logout** flows
-- **httpOnly cookie** session with JWT
-- **Zod** request validation
-- **Drizzle ORM** (Postgres) with migrations via drizzle-kit
-- **Bcrypt** password hashing
-- **Winston** logging
-- **Express 5**, CORS, Helmet, Cookie-Parser
+**A modern, cloud-native user management system built with security, scalability, and observability at its core.**
 
-## Tech Stack
-- Runtime: Node.js (ESM)
-- Web: Express 5
-- DB/ORM: Drizzle ORM + Postgres (Neon serverless)
-- Validation: Zod
-- Auth: JSON Web Tokens (JWT) + httpOnly cookies
-- Security: Helmet, CORS
-- Logging: Winston
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-brightgreen.svg)](https://kubernetes.io/)
+[![Docker](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://docker.com/)
+[![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
 
-## Project Structure
+Inputly is a production-ready web application that provides secure user authentication and management with enterprise-grade security features, comprehensive monitoring, and cloud-native deployment capabilities.
+
+## ✨ Features
+
+### 🔐 **Security First**
+- **Multi-layered Protection**: Arcjet integration for bot detection, attack shields, and smart rate limiting
+- **JWT Authentication**: Secure token-based auth with httpOnly cookies
+- **Role-based Access Control**: Admin and user roles with different permissions
+- **Password Security**: bcrypt hashing with salt rounds
+- **Security Headers**: Helmet.js protection against common vulnerabilities
+
+### 📊 **Enterprise Monitoring**
+- **Prometheus Metrics**: Custom HTTP request/duration/error tracking
+- **Grafana Dashboards**: Beautiful visualizations and alerting
+- **Health Endpoints**: Comprehensive system health checks
+- **Structured Logging**: JSON logging with Winston
+
+### ☸️ **Cloud Native**
+- **Kubernetes Ready**: Helm charts with proper health checks
+- **Infrastructure as Code**: Terraform deployment automation
+- **Horizontal Scaling**: Stateless design for easy scaling
+- **Container Optimized**: Multi-stage Docker builds
+
+### 🛠️ **Developer Experience**
+- **Modern Stack**: Node.js 20, React 18, ES Modules
+- **Type Safety**: Zod validation and Drizzle ORM
+- **Hot Reload**: Development with file watching
+- **Testing**: Jest integration tests with coverage
+- **Code Quality**: ESLint and Prettier configured
+
+## 🏗️ Architecture
+
 ```
-src/
-  app/
-  config/
-  controllers/
-    auth.controller.js
-  middleware/
-  models/
-    user.model.js
-  routes/
-    auth.routes.js
-  services/
-    auth.service.js
-  utils/
-    cookies.js
-    jwt.js
-  validations/
-    auth.validation.js
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend API   │    │   Database      │
+│   React + Vite  │◄──►│   Node.js       │◄──►│   PostgreSQL    │
+│   (Nginx)       │    │   + Express     │    │   (Neon)        │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                               │
+                       ┌─────────────────┐
+                       │   Monitoring    │
+                       │   Prometheus    │
+                       │   + Grafana     │
+                       └─────────────────┘
 ```
 
-## Getting Started
+**Tech Stack:**
+- **Backend**: Node.js 20, Express 5.x, Drizzle ORM
+- **Frontend**: React 18, Vite
+- **Database**: PostgreSQL (Neon Serverless)
+- **Security**: Arcjet, JWT, bcrypt
+- **Monitoring**: Prometheus, Grafana
+- **Infrastructure**: Docker, Kubernetes, Terraform, Helm
+
+## 🚀 Quick Start
+
+Choose your preferred deployment method:
+
+### Option 1: One-Command Setup (Recommended)
+```bash
+git clone https://github.com/thulanibango/Inputly.git
+cd Inputly
+./src/scripts/quick-start.sh
+```
+
+### Option 2: Local Development
+```bash
+git clone https://github.com/thulanibango/Inputly.git
+cd Inputly
+npm install
+./src/scripts/run-app.sh local
+```
+
+Your app will be running at **http://localhost:3000** 🎉
+
+## 📦 Installation
 
 ### Prerequisites
-- Node.js 18+
-- A Postgres database (Neon recommended)
 
-### Install
+- **Node.js** 20+ and npm
+- **Docker Desktop** (for containerized deployment)
+- **Minikube** or Kubernetes cluster (for K8s deployment)
+
+### Automated Installation
+
+The easiest way to get everything set up:
+
+```bash
+# Install all prerequisites and deploy the full stack
+./src/scripts/install-prerequisites.sh
 ```
+
+This script will:
+- ✅ Install Homebrew (if missing)
+- ✅ Install Docker Desktop, kubectl, minikube, helm, terraform
+- ✅ Start Minikube and enable ingress
+- ✅ Build and deploy your application
+- ✅ Set up monitoring (Prometheus + Grafana)
+- ✅ Configure access to all services
+
+### Manual Installation
+
+<details>
+<summary>Click to expand manual installation steps</summary>
+
+#### 1. Install Dependencies
+```bash
+# macOS with Homebrew
+brew install node docker kubectl minikube helm terraform
+
+# Or install manually:
+# Node.js: https://nodejs.org/
+# Docker Desktop: https://docker.com/products/docker-desktop
+# Minikube: https://minikube.sigs.k8s.io/docs/start/
+```
+
+#### 2. Start Minikube
+```bash
+minikube start
+minikube addons enable ingress
+```
+
+#### 3. Clone and Setup
+```bash
+git clone https://github.com/thulanibango/Inputly.git
+cd Inputly
 npm install
 ```
 
-### Environment Variables
-Create a `.env` file in the project root:
+#### 4. Environment Configuration
+```bash
+# Copy environment template
+cp .env.example .env.development
+
+# Edit with your database credentials
+nano .env.development
 ```
-# Server
-PORT=3000
+
+#### 5. Deploy Application
+```bash
+# Full deployment
+./src/scripts/deploy-minikube.sh
+
+# Or step by step:
+./src/scripts/build-images.sh
+./src/scripts/deploy-monitoring.sh
+./src/scripts/fix-monitoring.sh
+```
+
+</details>
+
+## 🎯 Deployment Options
+
+### 1. **Local Development**
+Perfect for development and testing:
+```bash
+./src/scripts/run-app.sh local
+# Access: http://localhost:3000
+```
+
+### 2. **Docker Development**
+Full-stack with database:
+```bash
+./src/scripts/run-app.sh docker-dev --logs
+# Access: http://localhost:3000
+```
+
+### 3. **Kubernetes (Minikube)**
+Production-like deployment:
+```bash
+./src/scripts/run-app.sh kubernetes --build
+# Access: curl -H 'Host: inputly.local' http://$(minikube ip)/
+```
+
+### 4. **Full Stack with Monitoring**
+Everything including Grafana and Prometheus:
+```bash
+./src/scripts/run-app.sh all
+# App: curl -H 'Host: inputly.local' http://$(minikube ip)/
+# Grafana: http://grafana.local (admin/admin123)
+```
+
+## 🔧 Available Scripts
+
+### Development
+```bash
+npm run dev              # Start development server
+npm run start            # Start production server
+npm run test             # Run tests
+npm run lint             # Lint code
+npm run format           # Format code with Prettier
+```
+
+### Database
+```bash
+npm run db:generate      # Generate migrations
+npm run db:migrate       # Run migrations
+npm run db:studio        # Open Drizzle Studio
+```
+
+### Docker
+```bash
+npm run dev:docker       # Start with Docker Compose (dev)
+npm run prod:docker      # Start with Docker Compose (prod)
+```
+
+### Kubernetes
+```bash
+npm run k8s:setup        # Setup Minikube
+npm run k8s:build        # Build container images
+npm run k8s:deploy       # Deploy to Kubernetes
+npm run k8s:destroy      # Destroy deployment
+```
+
+### Monitoring
+```bash
+npm run monitoring:deploy           # Deploy Prometheus + Grafana
+npm run monitoring:port-forward     # Access Grafana
+npm run monitoring:troubleshoot     # Debug monitoring issues
+```
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+
+### User Management (Admin only)
+- `GET /api/users` - List all users
+- `GET /api/users/:id` - Get user by ID
+- `PUT /api/users/:id` - Update user
+- `DELETE /api/users/:id` - Delete user
+
+### System
+- `GET /` - Application status
+- `GET /health` - Health check with system metrics
+- `GET /metrics` - Prometheus metrics
+
+## 🔐 Environment Variables
+
+Create `.env.development` for local development:
+
+```bash
 NODE_ENV=development
-
-# Auth
-JWT_SECRET=replace_with_a_strong_secret
-JWT_EXPIRES_IN=7d
-
-# Database (Neon example)
-DATABASE_URL=postgres://user:password@host:port/dbname
+PORT=3000
+DATABASE_URL=postgres://user:pass@localhost:5432/inputly
+JWT_SECRET=your-super-secret-jwt-key
+ARCJET_KEY=your-arcjet-api-key
 ```
 
-Ensure your app loads env vars in `src/config` (not shown here). Drizzle connects using `DATABASE_URL`.
+For production, create `.env.production` with production values.
 
-## Database
-Generate and run migrations with drizzle-kit:
-```
-npm run db:generate
-npm run db:migrate
-npm run db:studio    # optional visual browser
+## 📊 Monitoring & Observability
+
+### Access Monitoring Tools
+
+**Grafana Dashboard:**
+```bash
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 80:80
+# Visit: http://grafana.local
+# Login: admin / admin123
 ```
 
-The `users` table is defined in `src/models/user.model.js`.
-
-## Run the App
+**Prometheus Metrics:**
+```bash
+kubectl port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
+# Visit: http://localhost:9090
 ```
+
+### Custom Metrics
+- `http_requests_total` - Total HTTP requests by method, route, status
+- `http_request_duration_seconds` - Request duration histogram
+- `http_errors_total` - HTTP error counter
+- `active_requests` - Current active requests gauge
+
+### Health Checks
+- **Liveness Probe**: `GET /health`
+- **Readiness Probe**: `GET /health`
+- **Metrics Endpoint**: `GET /metrics`
+
+## 🧪 Testing
+
+Run the test suite:
+```bash
+npm test                    # Run all tests
+npm run test:watch          # Run tests in watch mode
+npm run test:coverage       # Run tests with coverage report
+```
+
+The test suite includes:
+- API endpoint testing
+- Authentication flow testing
+- Error handling validation
+- Health check verification
+
+## 🐳 Docker Support
+
+### Development
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+### Production
+```bash
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+
+### Multi-stage Builds
+The Dockerfiles use multi-stage builds for optimization:
+- **Base**: Production dependencies only
+- **Dev**: All dependencies + development tools
+- **Prod**: Optimized production build
+
+## ☸️ Kubernetes Deployment
+
+### Helm Charts
+The application includes production-ready Helm charts:
+
+```bash
+deploy/helm/
+├── inputly-api/           # Backend API service
+├── inputly-frontend/      # Frontend React app
+└── inputly-ingress/       # Ingress controller setup
+```
+
+### Terraform Infrastructure
+Infrastructure as Code with Terraform:
+
+```bash
+infra/terraform/
+├── main.tf               # Main infrastructure
+├── monitoring.tf         # Prometheus + Grafana
+└── variables.tf          # Configuration variables
+```
+
+### Deploy to Kubernetes
+```bash
+# Full deployment
+./src/scripts/deploy-minikube.sh
+
+# Just the monitoring stack
+./src/scripts/deploy-monitoring.sh
+
+# Fix monitoring configuration
+./src/scripts/fix-monitoring.sh
+```
+
+## 🛠️ Development
+
+### Project Structure
+```
+inputly/
+├── src/                   # Backend source code
+│   ├── config/           # Configuration files
+│   ├── controllers/      # Route controllers
+│   ├── middleware/       # Express middleware
+│   ├── models/           # Database models
+│   ├── routes/           # API routes
+│   ├── services/         # Business logic
+│   ├── utils/            # Helper functions
+│   └── validations/      # Input validation
+├── client/               # Frontend React app
+├── deploy/               # Kubernetes deployments
+├── infra/                # Infrastructure as Code
+├── tests/                # Test files
+├── docs/                 # Documentation
+└── coverage/             # Test coverage reports
+```
+
+### Code Quality
+- **ESLint**: Code linting with modern rules
+- **Prettier**: Code formatting
+- **Zod**: Runtime type validation
+- **Jest**: Testing framework
+
+### Adding New Features
+1. Add route in `src/routes/`
+2. Create controller in `src/controllers/`
+3. Add business logic in `src/services/`
+4. Add validation in `src/validations/`
+5. Write tests in `tests/`
+
+## 📚 Documentation
+
+- 📖 [Architecture Guide](./docs/architecture.md) - Detailed system architecture
+- 🔐 [Security Guide](./docs/security.md) - Security features and best practices
+- 📊 [Monitoring Guide](./docs/monitoring.md) - Monitoring and observability
+- 🚀 [Deployment Guide](./docs/deployment.md) - Production deployment guide
+- 📝 [API Documentation](./docs/api.md) - Complete API reference
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Setup
+```bash
+git clone https://github.com/thulanibango/Inputly.git
+cd Inputly
+npm install
 npm run dev
 ```
-By default the server runs with: `node --watch src/index.js` (see `package.json`).
 
-## Docker
+## 📄 License
+
+This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+**Minikube not starting:**
+```bash
+minikube delete
+minikube start --driver=docker
+```
+
+**Grafana not accessible:**
+```bash
+./src/scripts/setup-grafana-access.sh
+```
+
+**Metrics not showing:**
+```bash
+./src/scripts/troubleshoot-monitoring.sh
+```
+
+**Database connection issues:**
+```bash
+# Check your .env.development file
+# Ensure DATABASE_URL is correct
+```
+
+### Get Help
+
+- 🐛 [Report Issues](https://github.com/thulanibango/Inputly/issues)
+- 💬 [Discussions](https://github.com/thulanibango/Inputly/discussions)
+- 📧 Contact: [your-email@example.com]
+
+## 🙏 Acknowledgments
+
+- [Arcjet](https://arcjet.com/) for security features
+- [Neon](https://neon.tech/) for serverless PostgreSQL
+- [Prometheus](https://prometheus.io/) and [Grafana](https://grafana.com/) for monitoring
+- The amazing open-source community
+
+---
+
+**⭐ If you find this project helpful, please give it a star!**
+
+Built with ❤️ by [Tulani Bango](https://github.com/thulanibango)
+
+---
+
+## Legacy Docker Documentation
 
 This project includes first-class Docker support for both development with Neon Local and production with Neon Cloud.
 
