@@ -61,50 +61,36 @@
 /* Glassmorphism styles */
 @layer components {
   .glass {
-    @apply bg-white/20 backdrop-blur-lg border border-white/30 shadow-lg rounded-2xl;
+    @apply bg-gray-100 border border-gray-200 shadow-lg rounded-2xl;
   }
   
   .glass-card {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl;
+    @apply bg-gray-50 border border-gray-200 shadow-xl rounded-3xl;
   }
   
   .glass-button {
-    @apply bg-white/20 backdrop-blur-sm border border-white/30 shadow-md rounded-xl;
+    @apply bg-gray-200 text-gray-800 border border-gray-300 shadow-sm rounded-xl;
     transition: all 0.3s ease;
   }
   
   .glass-button:hover {
-    @apply bg-white/30 shadow-lg;
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    @apply bg-gray-300 shadow-md;
   }
   
   .glass-input {
-    @apply bg-white/10 backdrop-blur-sm border border-white/20 shadow-sm rounded-lg;
+    @apply bg-gray-50 border border-gray-200 shadow-sm rounded-lg;
     transition: all 0.3s ease;
   }
   
   .glass-input:focus {
-    @apply bg-white/15 border-white/40 shadow-md;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    @apply bg-gray-100 border-gray-300 shadow-md;
   }
   
   .gradient-bg {
-    background: linear-gradient(135deg, 
-      #667eea 0%, 
-      #764ba2 25%, 
-      #f093fb 50%, 
-      #f5576c 75%, 
-      #4facfe 100%
-    );
+    background: #9ca3af;
   }
   
   .gradient-bg-dark {
-    background: linear-gradient(135deg,
-      #0c0c0c 0%,
-      #1a1a2e 25%, 
-      #16213e 50%,
-      #0f3460 75%,
-      #533483 100%
-    );
+    background: #6b7280;
   }
 }

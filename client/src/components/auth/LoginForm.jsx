@@ -13,7 +13,7 @@ export function LoginForm({ onSwitchToRegister }) {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
+
   const { login } = useAuth()
 
   const handleSubmit = async (e) => {
@@ -103,7 +103,7 @@ export function LoginForm({ onSwitchToRegister }) {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 text-white/60 hover:text-white hover:bg-white/10"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 bg-white text-black hover:text-black hover:bg-white/10"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={loading}
                 >
@@ -119,7 +119,7 @@ export function LoginForm({ onSwitchToRegister }) {
             <Button
               type="submit"
               variant="glass"
-              className="w-full"
+              className="w-full bg-white text-black hover:bg-gray-100"
               disabled={loading}
             >
               {loading ? (
@@ -142,11 +142,11 @@ export function LoginForm({ onSwitchToRegister }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <p className="text-white/70 text-sm">
+            <p className="text-black text-sm">
               Don't have an account?{' '}
               <button
                 onClick={onSwitchToRegister}
-                className="text-white hover:text-white/90 underline underline-offset-4 transition-colors"
+                className="bg-white text-black hover:text-gray-700 hover:bg-gray-100 underline underline-offset-4 transition-colors"
                 disabled={loading}
               >
                 Sign up here

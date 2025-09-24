@@ -57,7 +57,7 @@ export function AuthPage() {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <motion.h1 
-            className="text-4xl font-bold text-white mb-2"
+            className="text-4xl font-bold text-black mb-2"
             animate={{ 
               textShadow: [
                 "0 0 20px rgba(255,255,255,0.5)",
@@ -73,7 +73,7 @@ export function AuthPage() {
           >
             Inputly
           </motion.h1>
-          <p className="text-white/70 text-lg">
+          <p className="text-black/70 text-lg">
             Modern User Management System
           </p>
         </motion.div>

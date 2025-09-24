@@ -61,7 +61,7 @@ export function Dashboard() {
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center gap-3">
                 <motion.h1 
-                  className="text-2xl font-bold text-white"
+                  className="text-2xl font-bold text-black"
                   animate={{ 
                     textShadow: [
                       "0 0 10px rgba(255,255,255,0.3)",
@@ -77,8 +77,8 @@ export function Dashboard() {
                 >
                   Inputly
                 </motion.h1>
-                <span className="text-white/40">|</span>
-                <span className="text-white/70">Dashboard</span>
+                <span className="text-black/40">|</span>
+                <span className="text-black/70">Dashboard</span>
               </div>
 
               <div className="flex items-center gap-4">
@@ -88,7 +88,7 @@ export function Dashboard() {
                   ) : (
                     <User className="w-4 h-4 text-blue-400" />
                   )}
-                  <span className="text-white/90 text-sm font-medium">
+                  <span className="text-black text-sm font-medium">
                     {user?.name}
                   </span>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -103,7 +103,7 @@ export function Dashboard() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white/60 hover:text-white hover:bg-white/10"
+                  className="text-black/60 hover:text-black hover:bg-black/10"
                   onClick={() => alert('Settings to be implemented')}
                 >
                   <Settings className="w-4 h-4" />
@@ -112,7 +112,7 @@ export function Dashboard() {
                 <Button
                   variant="glass"
                   onClick={handleLogout}
-                  className="text-white"
+                  className="bg-white text-black"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
@@ -132,10 +132,10 @@ export function Dashboard() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-center"
             >
-              <h2 className="text-3xl font-bold text-white mb-2">
+              <h2 className="text-3xl font-bold text-black mb-2">
                 Welcome back, {user?.name?.split(' ')[0]}!
               </h2>
-              <p className="text-white/70 text-lg">
+              <p className="text-black/70 text-lg">
                 {isAdmin 
                   ? 'Manage users and system settings from your admin dashboard.' 
                   : 'View and manage your account information.'
