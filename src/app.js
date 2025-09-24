@@ -31,4 +31,13 @@ app.get('/api', (req, res) => {
 })
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({ status: 'fail', message: 'route Not found' });
+})
+
+app.use((err, req, res, next) => {
+  logger.error(err);
+  res.status(500).json({ status: 'error', message: 'Internal server error' });
+})
 export default app;
