@@ -21,10 +21,10 @@ function LoadingScreen() {
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           className="inline-block"
         >
-          <Loader2 className="w-12 h-12 text-white/80" />
+          <Loader2 className="w-12 h-12 text-black/80" />
         </motion.div>
         <motion.h2 
-          className="text-2xl font-semibold text-white mt-4"
+          className="text-2xl font-semibold text-black mt-4"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
         >

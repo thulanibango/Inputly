@@ -73,8 +73,8 @@ export function UsersList({ refreshTrigger }) {
     return (
       <Card className="w-full">
         <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="w-6 h-6 animate-spin text-white/60" />
-          <span className="ml-2 text-white/60">Loading users...</span>
+          <Loader2 className="w-6 h-6 animate-spin text-black/60" />
+          <span className="ml-2 text-black/60">Loading users...</span>
         </CardContent>
       </Card>
     )
@@ -109,7 +109,7 @@ export function UsersList({ refreshTrigger }) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-8 text-white/60"
+              className="text-center py-8 text-black/60"
             >
               <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>No users found</p>
@@ -118,7 +118,7 @@ export function UsersList({ refreshTrigger }) {
             <div className="rounded-lg overflow-hidden glass-card">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-white/10">
+                  <TableRow className="border-black/10">
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
@@ -135,11 +135,11 @@ export function UsersList({ refreshTrigger }) {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 20 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
-                        className="border-white/10 hover:bg-white/5"
+                        className="border-black/10 hover:bg-black/5"
                       >
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-black text-sm font-medium">
                               {user.name.charAt(0).toUpperCase()}
                             </div>
                             {user.name}
@@ -152,7 +152,7 @@ export function UsersList({ refreshTrigger }) {
                             {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                           </span>
                         </TableCell>
-                        <TableCell className="text-white/60">
+                        <TableCell className="text-black/60">
                           {new Date(user.createdAt).toLocaleDateString()}
                         </TableCell>
                         {isAdmin && (
@@ -161,7 +161,7 @@ export function UsersList({ refreshTrigger }) {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-white/60 hover:text-white hover:bg-white/10"
+                                className="h-8 w-8 text-black/60 hover:text-black hover:bg-black/10"
                                 onClick={() => {
                                   // TODO: Implement edit functionality
                                   alert('Edit functionality to be implemented')
@@ -173,7 +173,7 @@ export function UsersList({ refreshTrigger }) {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-8 w-8 text-white/60 hover:text-red-400 hover:bg-red-500/10"
+                                  className="h-8 w-8 text-black/60 hover:text-red-400 hover:bg-red-500/10"
                                   onClick={() => handleDeleteUser(user.id, user.name)}
                                   disabled={deleteLoading === user.id}
                                 >

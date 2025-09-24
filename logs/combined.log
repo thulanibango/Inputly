@@ -284,3 +284,5 @@
 {"level":"info","message":"::1 - - [24/Sep/2025:17:02:05 +0000] \"GET /health HTTP/1.1\" 200 221 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T17:02:05.014Z"}
 {"level":"info","message":"Hello from Inputly!","service":"inputly","timestamp":"2025-09-24T17:21:01.443Z"}
 {"level":"info","message":"::1 - - [24/Sep/2025:17:21:01 +0000] \"GET / HTTP/1.1\" 304 - \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T17:21:01.448Z"}
+{"email":"nextyeswsss@gmail.com","level":"info","message":"Login controller","service":"inputly","timestamp":"2025-09-24T21:04:01.671Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:21:04:01 +0000] \"POST /api/auth/login HTTP/1.1\" 200 148 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T21:04:01.675Z"}
