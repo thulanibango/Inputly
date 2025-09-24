@@ -1,0 +1,4 @@
+image:
+  repository: inputly-frontend
+  tag: local
+  pullPolicy: IfNotPresent
