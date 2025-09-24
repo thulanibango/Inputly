@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Production deployment script for Acquisition App
+# Production deployment script for inputly App
 # This script starts the application in production mode with Neon Cloud Database
 
-echo "🚀 Starting Acquisition App in Production Mode"
+echo "🚀 Starting inputly App in Production Mode"
 echo "==============================================="
 
 # Check if .env.production exists
@@ -39,8 +39,8 @@ npm run db:migrate
 echo ""
 echo "🎉 Production environment started!"
 echo "   Application: http://localhost:3000"
-echo "   Logs: docker logs acquisition-app-prod"
+echo "   Logs: docker logs inputly-app-prod"
 echo ""
 echo "Useful commands:"
-echo "   View logs: docker logs -f acquisition-app-prod"
+echo "   View logs: docker logs -f inputly-app-prod"
 echo "   Stop app: docker compose -f docker-compose.prod.yml down"

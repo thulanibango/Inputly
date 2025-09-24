@@ -28,6 +28,11 @@ resource "helm_release" "kps" {
       prometheus = {
         prometheusSpec = {
           serviceMonitorSelectorNilUsesHelmValues = false
+          serviceMonitorSelector = {
+            matchLabels = {
+              release = var.prometheus_release_name
+            }
+          }
         }
       }
     })

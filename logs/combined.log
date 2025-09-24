@@ -271,3 +271,16 @@
 {"level":"info","message":"::1 - - [24/Sep/2025:16:34:22 +0000] \"GET /health HTTP/1.1\" 200 221 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:34:22.325Z"}
 {"email":"nextyeswsss@gmail.com","level":"info","message":"Login controller","service":"inputly","timestamp":"2025-09-24T16:34:37.332Z"}
 {"level":"info","message":"::1 - - [24/Sep/2025:16:34:37 +0000] \"POST /api/auth/login HTTP/1.1\" 200 148 \"-\" \"HTTPie\"","service":"inputly","timestamp":"2025-09-24T16:34:37.337Z"}
+{"ip":"::1","level":"warn","message":"Bot request blocked","path":"/","service":"inputly","timestamp":"2025-09-24T17:00:46.125Z","userAgent":"PostmanRuntime/7.47.1"}
+{"ip":"::1","level":"warn","message":"Bot request blocked","path":"/","service":"inputly","timestamp":"2025-09-24T17:00:51.109Z","userAgent":"PostmanRuntime/7.47.1"}
+{"ip":"::1","level":"warn","message":"Bot request blocked","path":"/api","service":"inputly","timestamp":"2025-09-24T17:00:56.980Z","userAgent":"PostmanRuntime/7.47.1"}
+{"ip":"::1","level":"warn","message":"Bot request blocked","path":"/health","service":"inputly","timestamp":"2025-09-24T17:01:03.834Z","userAgent":"PostmanRuntime/7.47.1"}
+{"ip":"::1","level":"warn","message":"Bot request blocked","path":"/health","service":"inputly","timestamp":"2025-09-24T17:01:14.909Z","userAgent":"PostmanRuntime/7.47.1"}
+{"ip":"::1","level":"warn","message":"Bot request blocked","path":"/health","service":"inputly","timestamp":"2025-09-24T17:01:15.842Z","userAgent":"PostmanRuntime/7.47.1"}
+{"level":"info","message":"Hello from Inputly!","service":"inputly","timestamp":"2025-09-24T17:01:51.882Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:17:01:51 +0000] \"GET / HTTP/1.1\" 200 19 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T17:01:51.884Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:17:01:52 +0000] \"GET /favicon.ico HTTP/1.1\" 404 45 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T17:01:52.144Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:17:01:57 +0000] \"GET /api HTTP/1.1\" 200 221 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T17:01:57.601Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:17:02:05 +0000] \"GET /health HTTP/1.1\" 200 221 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T17:02:05.014Z"}
+{"level":"info","message":"Hello from Inputly!","service":"inputly","timestamp":"2025-09-24T17:21:01.443Z"}
+{"level":"info","message":"::1 - - [24/Sep/2025:17:21:01 +0000] \"GET / HTTP/1.1\" 304 - \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","service":"inputly","timestamp":"2025-09-24T17:21:01.448Z"}

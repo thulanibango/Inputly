@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.service.name | default .Release.Name }}
   labels:
     app: {{ .Release.Name }}
+    release: {{ .Values.metrics.prometheusRelease | default "kube-prometheus-stack" }}
 spec:
   type: {{ .Values.service.type }}
   selector:

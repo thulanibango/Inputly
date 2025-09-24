@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Development startup script for Acquisition App with Neon Local
+# Development startup script for inputly App with Neon Local
 # This script starts the application in development mode with Neon Local
 
-echo "🚀 Starting Acquisition App in Development Mode"
+echo "🚀 Starting inputly App in Development Mode"
 echo "================================================"
 
 # Check if .env.development exists
