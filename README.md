@@ -6,6 +6,9 @@
 [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-brightgreen.svg)](https://kubernetes.io/)
 [![Docker](https://img.shields.io/badge/Docker-Supported-blue.svg)](https://docker.com/)
+[![CI](https://github.com/thulanibango/Inputly/actions/workflows/ci.yml/badge.svg)](https://github.com/thulanibango/Inputly/actions/workflows/ci.yml)
+[![Tests](https://github.com/thulanibango/Inputly/actions/workflows/tests.yml/badge.svg)](https://github.com/thulanibango/Inputly/actions/workflows/tests.yml)
+[![Lint](https://github.com/thulanibango/Inputly/actions/workflows/lint-and-format.yml/badge.svg)](https://github.com/thulanibango/Inputly/actions/workflows/lint-and-format.yml)
 [![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
 
 Inputly is a production-ready web application that provides secure user authentication and management with enterprise-grade security features, comprehensive monitoring, and cloud-native deployment capabilities.
@@ -218,8 +221,22 @@ npm run prod:docker      # Start with Docker Compose (prod)
 ```bash
 npm run k8s:setup        # Setup Minikube
 npm run k8s:build        # Build container images
-npm run k8s:deploy       # Deploy to Kubernetes
+npm run k8s:deploy       # Deploy to Kubernetes (with monitoring)
+npm run k8s:quick-deploy # Quick Kubernetes-only deployment
 npm run k8s:destroy      # Destroy deployment
+npm run k8s:status       # Check deployment status
+npm run k8s:logs         # View API logs
+npm run k8s:port-forward # Setup port forwarding
+npm run k8s:stop-forward # Stop port forwarding
+npm run k8s:restart      # Restart deployments
+npm run k8s:scale        # Scale to 2 replicas
+```
+
+### Setup
+```bash
+npm run setup:environment          # Install local dependencies
+npm run setup:prerequisites        # Full monitoring setup
+npm run setup:quick                # Complete quick start
 ```
 
 ### Monitoring

@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inputly-api
+  labels:
+    app: inputly-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inputly-api
+  template:
+    metadata:
+      labels:
+        app: inputly-api
+    spec:
+      containers:
+        - name: api
+          image: inputly:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            - name: JWT_SECRET
+              value: "your-super-secret-jwt-key-for-demo"
+            - name: DATABASE_URL
+              value: "postgres://user:password@localhost:5432/inputly"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inputly-api-service
+spec:
+  selector:
+    app: inputly-api
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inputly-frontend
+  labels:
+    app: inputly-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inputly-frontend
+  template:
+    metadata:
+      labels:
+        app: inputly-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: inputly-frontend:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inputly-frontend-service
+spec:
+  selector:
+    app: inputly-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: inputly-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: inputly.local
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: inputly-api-service
+            port:
+              number: 3000
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: inputly-frontend-service
+            port:
+              number: 80

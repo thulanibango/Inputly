@@ -1,0 +1,63 @@
+name: Lint and Format
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+
+jobs:
+  lint-and-format:
+    name: ESLint and Prettier Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run ESLint
+        run: |
+          echo "::group::Running ESLint"
+          if npm run lint; then
+            echo "✅ ESLint passed!"
+          else
+            echo "::error::ESLint found issues! Run 'npm run lint:fix' to automatically fix some issues."
+            echo "::notice::You can run 'npm run lint:fix' locally to fix many issues automatically"
+            exit 1
+          fi
+          echo "::endgroup::"
+          
+      - name: Run Prettier Check
+        run: |
+          echo "::group::Running Prettier Check"
+          if npm run format:check; then
+            echo "✅ Prettier check passed!"
+          else
+            echo "::error::Code formatting issues found! Run 'npm run format' to fix formatting."
+            echo "::notice::You can run 'npm run format' locally to fix all formatting issues"
+            exit 1
+          fi
+          echo "::endgroup::"
+          
+      - name: Lint and Format Summary
+        if: always()
+        run: |
+          echo "## 📋 Lint and Format Results" >> $GITHUB_STEP_SUMMARY
+          if [[ ${{ job.status }} == "success" ]]; then
+            echo "✅ All linting and formatting checks passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Some checks failed. See the steps above for details." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🔧 How to fix:" >> $GITHUB_STEP_SUMMARY
+            echo "- Run \`npm run lint:fix\` to automatically fix ESLint issues" >> $GITHUB_STEP_SUMMARY
+            echo "- Run \`npm run format\` to fix code formatting" >> $GITHUB_STEP_SUMMARY
+          fi
