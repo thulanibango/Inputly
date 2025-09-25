@@ -1,0 +1,35 @@
+image:
+  repository: inputly
+  tag: local
+  pullPolicy: IfNotPresent
+
+env:
+  NODE_ENV: production
+  PORT: "3000"
+
+secrets: {}
+
+service:
+  name: inputly-api
+  type: ClusterIP
+  port: 3000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+replicas: 1
+
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readiness:
+    path: /api
+    initialDelaySeconds: 3
+    periodSeconds: 5

@@ -1,0 +1,142 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install backend deps
+        run: npm ci
+
+      - name: Run tests
+        run: npm test --silent
+
+      - name: Install frontend deps
+        working-directory: ./client
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./client
+        run: npm run build
+
+      - name: Build backend docker image
+        run: |
+          docker build -t inputly:ci -f Dockerfile .
+
+      - name: Build frontend docker image
+        run: |
+          docker build -t inputly-frontend:ci ./client
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Helm lint API chart
+        run: helm lint deploy/helm/inputly-api
+
+      - name: Helm lint Frontend chart
+        run: helm lint deploy/helm/inputly-frontend
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
+      - name: Terraform fmt
+        working-directory: ./infra/terraform
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        working-directory: ./infra/terraform
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        working-directory: ./infra/terraform
+        run: terraform validate
+
+      # ----- Push images to GHCR -----
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag images for GHCR
+        id: tagger
+        run: |
+          SHA_TAG=${{ github.sha }}
+          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "owner_lc=$OWNER_LC" >> $GITHUB_OUTPUT
+          echo "sha_tag=$SHA_TAG" >> $GITHUB_OUTPUT
+          docker tag inputly:ci ghcr.io/$OWNER_LC/inputly:$SHA_TAG
+          docker tag inputly-frontend:ci ghcr.io/$OWNER_LC/inputly-frontend:$SHA_TAG
+          # Tag 'latest' on default branch
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
+            docker tag inputly:ci ghcr.io/$OWNER_LC/inputly:latest
+            docker tag inputly-frontend:ci ghcr.io/$OWNER_LC/inputly-frontend:latest
+          fi
+
+      - name: Push images to GHCR
+        run: |
+          OWNER_LC=${{ steps.tagger.outputs.owner_lc }}
+          SHA_TAG=${{ steps.tagger.outputs.sha_tag }}
+          docker push ghcr.io/$OWNER_LC/inputly:$SHA_TAG
+          docker push ghcr.io/$OWNER_LC/inputly-frontend:$SHA_TAG
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
+            docker push ghcr.io/$OWNER_LC/inputly:latest
+            docker push ghcr.io/$OWNER_LC/inputly-frontend:latest
+          fi
+
+      # ----- Optional: Push images to Docker Hub if secrets provided -----
+      - name: Login to Docker Hub
+        if: ${{ (secrets.DOCKERHUB_USERNAME != '') && (secrets.DOCKERHUB_PASSWORD != '') }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Tag images for Docker Hub
+        if: ${{ (secrets.DOCKERHUB_USERNAME != '') && (secrets.DOCKERHUB_PASSWORD != '') }}
+        id: hubtagger
+        run: |
+          SHA_TAG=${{ github.sha }}
+          USER=${{ secrets.DOCKERHUB_USERNAME }}
+          docker tag inputly:ci $USER/inputly:$SHA_TAG
+          docker tag inputly-frontend:ci $USER/inputly-frontend:$SHA_TAG
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
+            docker tag inputly:ci $USER/inputly:latest
+            docker tag inputly-frontend:ci $USER/inputly-frontend:latest
+          fi
+
+      - name: Push images to Docker Hub
+        if: ${{ (secrets.DOCKERHUB_USERNAME != '') && (secrets.DOCKERHUB_PASSWORD != '') }}
+        run: |
+          USER=${{ secrets.DOCKERHUB_USERNAME }}
+          SHA_TAG=${{ github.sha }}
+          docker push $USER/inputly:$SHA_TAG
+          docker push $USER/inputly-frontend:$SHA_TAG
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
+            docker push $USER/inputly:latest
+            docker push $USER/inputly-frontend:latest
+          fi

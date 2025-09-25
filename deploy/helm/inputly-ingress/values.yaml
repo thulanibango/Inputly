@@ -1,0 +1,13 @@
+ingress:
+  enabled: true
+  className: nginx
+  host: inputly.local
+  annotations: {}
+
+backend:
+  serviceName: inputly-api
+  servicePort: 3000
+
+frontend:
+  serviceName: inputly-frontend
+  servicePort: 80
