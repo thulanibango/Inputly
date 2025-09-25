@@ -1,0 +1,57 @@
+name: Branch Protection
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches:
+      - 'dev'
+      - 'staging'
+      - 'main' 
+
+jobs:
+  validate-branch-names:
+    name: Validate Branch Names
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check for direct push to protected branches
+      if: |
+        github.event_name == 'push' &&
+        contains('refs/heads/dev,refs/heads/staging,refs/heads/main', github.ref) &&
+        !(
+          github.ref == 'refs/heads/main' && (
+            github.event.head_commit.author.email == 'thulanibango@gmail.com' ||
+            github.event.pusher.email == 'thulanibango@gmail.com' ||
+            github.actor == 'thulanibango'
+          )
+        )
+      run: |
+        echo "Error: Direct pushes to protected branches (dev, staging, main) are not allowed."
+        echo "Exception: A direct push to 'main' is only allowed for commits authored/pushed by 'thulanibango@gmail.com'."
+        echo "Please create a pull request instead."
+        exit 1
+
+    - name: Check PR source branch name pattern
+      if: github.event_name == 'pull_request_target' && !startsWith(github.head_ref, 'feature-') && github.base_ref == 'dev'
+      run: |
+        echo "Error: Pull requests to 'dev' must come from a branch named 'feature-<feature-name>/<name>'"
+        echo "Please rename your branch to follow the pattern: feature-<feature-name>/<name>"
+        exit 1
+
+    - name: Check PR target for dev branch
+      if: github.event_name == 'pull_request_target' && github.base_ref == 'dev' && !contains(github.event.pull_request.labels.*.name, 'ready-for-staging')
+      run: |
+        echo "Pull request to 'dev' branch is allowed from any branch"
+
+    - name: Check PR target for staging branch
+      if: github.event_name == 'pull_request_target' && github.base_ref == 'staging' && github.head_ref != 'dev'
+      run: |
+        echo "Error: Only the 'dev' branch can be merged into 'staging'"
+        exit 1
+
+    - name: Check PR target for main branch
+      if: github.event_name == 'pull_request_target' && github.base_ref == 'main' && github.head_ref != 'staging'
+      run: |
+        echo "Error: Only the 'staging' branch can be merged into 'main'"
+        exit 1

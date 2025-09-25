@@ -1,0 +1,48 @@
+name: Auto Delete Feature Branches
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  delete-branch:
+    name: Delete feature branch after merge to dev
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete feature branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const headRef = pr.head.ref;
+            const baseRef = pr.base.ref;
+            const sameRepo = pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
+            const protectedBranches = ['dev','staging','main'];
+            const isFeature = /^feature-[^/]+\/.+/.test(headRef);
+
+            if (!sameRepo) {
+              core.info('Head branch is from a fork; skipping deletion.');
+              return;
+            }
+            if (!isFeature) {
+              core.info(`Branch '${headRef}' does not match feature pattern; skipping.`);
+              return;
+            }
+            if (protectedBranches.includes(headRef)) {
+              core.info(`Branch '${headRef}' is protected; skipping.`);
+              return;
+            }
+
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `heads/${headRef}`,
+              });
+              core.info(`Deleted branch '${headRef}'.`);
+            } catch (e) {
+              core.warning(`Failed to delete branch '${headRef}': ${e.message}`);
+            }

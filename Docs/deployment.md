@@ -35,7 +35,7 @@ This comprehensive guide covers all deployment methods for Inputly, from local d
 
 ## ⚡ Quick Deployment
 
-### One-Command Setup
+### One-Command Full Setup (Monitoring + App)
 ```bash
 git clone https://github.com/thulanibango/Inputly.git
 cd Inputly
@@ -49,9 +49,47 @@ This script automatically:
 - ✅ Sets up monitoring (Prometheus + Grafana)
 - ✅ Configures access to all services
 
-### Installation Script
+### Quick Kubernetes-Only Deployment
 ```bash
-./src/scripts/install-prerequisites.sh
+git clone https://github.com/thulanibango/Inputly.git
+cd Inputly
+./src/scripts/quick-kubernetes-deploy.sh
+```
+
+This script focuses on just the application:
+- ✅ Checks prerequisites and Docker status
+- ✅ Starts Minikube cluster
+- ✅ Builds Docker images
+- ✅ Deploys to Kubernetes
+- ✅ Sets up port forwarding
+- ✅ Tests deployment
+
+**Access**: Frontend at http://localhost:8080, API at http://localhost:8081
+
+### Using NPM Scripts (Alternative)
+```bash
+# Quick Kubernetes deployment
+npm run k8s:quick-deploy
+
+# Setup port forwarding
+npm run k8s:port-forward
+
+# Check deployment status
+npm run k8s:status
+
+# View logs
+npm run k8s:logs
+```
+
+### Environment Setup Only
+```bash
+./src/scripts/setup-local-environment.sh  # Install tools
+./src/scripts/install-prerequisites.sh    # Full monitoring stack setup
+
+# OR using npm scripts:
+npm run setup:environment      # Install tools
+npm run setup:prerequisites    # Full monitoring stack setup
+npm run setup:quick           # Full quick start setup
 ```
 
 ## 🔧 Local Development
@@ -155,15 +193,19 @@ ARCJET_KEY=your-arcjet-key
 ```bash
 # 1. Setup Minikube
 ./src/scripts/minikube-setup.sh
+# OR: npm run k8s:setup
 
 # 2. Build images
 ./src/scripts/build-images.sh
+# OR: npm run k8s:build
 
 # 3. Deploy application
 ./src/scripts/deploy-minikube.sh
+# OR: npm run k8s:deploy
 
 # 4. Deploy monitoring
 ./src/scripts/deploy-monitoring.sh
+# OR: npm run monitoring:deploy
 
 # 5. Fix monitoring configuration
 ./src/scripts/fix-monitoring.sh
@@ -260,6 +302,55 @@ helm install inputly-api ./deploy/helm/inputly-api \
   --set resources.requests.cpu=500m \
   --set resources.requests.memory=512Mi \
   --set replicas=3
+```
+
+## 📋 Available NPM Scripts
+
+### Kubernetes Scripts
+| Script | Command | Description |
+|--------|---------|-------------|
+| **k8s:setup** | `npm run k8s:setup` | Setup Minikube cluster |
+| **k8s:build** | `npm run k8s:build` | Build Docker images |
+| **k8s:deploy** | `npm run k8s:deploy` | Deploy to Minikube with monitoring |
+| **k8s:quick-deploy** | `npm run k8s:quick-deploy` | Quick Kubernetes-only deployment |
+| **k8s:destroy** | `npm run k8s:destroy` | Destroy Kubernetes deployment |
+| **k8s:port-forward** | `npm run k8s:port-forward` | Setup port forwarding |
+| **k8s:stop-forward** | `npm run k8s:stop-forward` | Stop port forwarding |
+| **k8s:status** | `npm run k8s:status` | Check deployment status |
+| **k8s:logs** | `npm run k8s:logs` | View API logs |
+| **k8s:logs-frontend** | `npm run k8s:logs-frontend` | View frontend logs |
+| **k8s:restart** | `npm run k8s:restart` | Restart deployments |
+| **k8s:scale** | `npm run k8s:scale` | Scale to 2 replicas |
+
+### Setup Scripts  
+| Script | Command | Description |
+|--------|---------|-------------|
+| **setup:environment** | `npm run setup:environment` | Install local dependencies |
+| **setup:prerequisites** | `npm run setup:prerequisites` | Full monitoring setup |
+| **setup:quick** | `npm run setup:quick` | Complete quick start |
+
+### Monitoring Scripts
+| Script | Command | Description |
+|--------|---------|-------------|
+| **monitoring:deploy** | `npm run monitoring:deploy` | Deploy monitoring stack |
+| **monitoring:port-forward** | `npm run monitoring:port-forward` | Access Grafana |
+| **monitoring:troubleshoot** | `npm run monitoring:troubleshoot` | Debug monitoring |
+
+### Example Workflows
+```bash
+# Quick start (first time)
+npm run setup:environment
+npm run k8s:quick-deploy
+npm run k8s:status
+
+# Daily development
+npm run k8s:logs            # Check logs
+npm run k8s:restart         # Restart after changes
+npm run k8s:scale           # Scale up for testing
+
+# Cleanup
+npm run k8s:stop-forward    # Stop port forwarding
+npm run k8s:destroy         # Clean up deployment
 ```
 
 ## 🌐 Production Deployment

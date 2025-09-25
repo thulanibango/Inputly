@@ -6,7 +6,8 @@ export function cn(...inputs) {
 }
 
 // API utilities
-const API_BASE_URL = 'http://inputly.local'
+const API_BASE_URL = 'http://localhost:8081';
+//  // Local development
 
 export const api = {
   async request(endpoint, options = {}) {
