@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Eye, EyeOff, UserPlus, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, UserPlus, Loader2, Users } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { useAuth } from '../../contexts/AuthContext'
 
 export function RegisterForm({ onSwitchToLogin }) {
@@ -12,7 +13,8 @@ export function RegisterForm({ onSwitchToLogin }) {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: 'user'
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -47,7 +49,7 @@ export function RegisterForm({ onSwitchToLogin }) {
     }
 
     try {
-      const result = await register(formData.name, formData.email, formData.password)
+      const result = await register(formData.name, formData.email, formData.password, formData.role)
       if (!result.success) {
         setError(result.error)
       }
@@ -77,7 +79,7 @@ export function RegisterForm({ onSwitchToLogin }) {
               Create Account
             </CardTitle>
             <CardDescription className="text-center">
-              Sign up for a new account to get started
+              Sign up for a new account and select your role to get started
             </CardDescription>
           </motion.div>
         </CardHeader>
@@ -125,6 +127,36 @@ export function RegisterForm({ onSwitchToLogin }) {
                 required
                 disabled={loading}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <Select
+                value={formData.role}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+                disabled={loading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">
+                    <div className="flex items-center gap-2">
+                      <UserPlus className="w-4 h-4" />
+                      User - Standard Access
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="admin">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      Admin - Full Access
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-600">
+                Choose your access level. Users have standard access, Admins can manage users and settings.
+              </p>
             </div>
 
             <div className="space-y-2">

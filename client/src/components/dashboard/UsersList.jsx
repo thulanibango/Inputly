@@ -22,8 +22,10 @@ export function UsersList({ refreshTrigger }) {
   const loadUsers = async () => {
     try {
       const response = await api.getUsers()
-      setUsers(response.data.users)
+      console.log('Users response:', response) // Debug log
+      setUsers(response.data) // Changed from response.data.users to response.data
     } catch (err) {
+      console.log('Load users error:', err) // Debug log
       setError(err.message)
     } finally {
       setLoading(false)

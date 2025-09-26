@@ -24,8 +24,10 @@ export function AuthProvider({ children }) {
     try {
       // Try to fetch user data using the existing cookie
       const response = await api.request('/api/users/me')
-      setUser(response.data.user)
+      console.log('CheckAuth response:', response) // Debug log
+      setUser(response.user) // Changed from response.data.user to response.user
     } catch (error) {
+      console.log('CheckAuth error:', error) // Debug log
       // User is not logged in
       setUser(null)
     } finally {
@@ -36,8 +38,9 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       const response = await api.login(email, password)
-      setUser(response.data.user)
-      return { success: true, user: response.data.user }
+      console.log('Login response:', response) // Debug log
+      setUser(response.user) // Changed from response.data.user to response.user
+      return { success: true, user: response.user }
     } catch (error) {
       return { success: false, error: error.message }
     }
@@ -46,8 +49,9 @@ export function AuthProvider({ children }) {
   const register = async (name, email, password, role = 'user') => {
     try {
       const response = await api.register(name, email, password, role)
-      setUser(response.data.user)
-      return { success: true, user: response.data.user }
+      console.log('Register response:', response) // Debug log
+      setUser(response.user) // Changed from response.data.user to response.user
+      return { success: true, user: response.user }
     } catch (error) {
       return { success: false, error: error.message }
     }
