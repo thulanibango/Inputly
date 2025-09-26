@@ -1,13 +1,14 @@
 import { clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 // API utilities
-const API_BASE_URL = 'http://localhost:8081';
-//  // Local development
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? ''  // Use relative paths - Nginx will proxy to backend
+  : 'http://localhost:3000';           // Local development
 
 export const api = {
   async request(endpoint, options = {}) {
@@ -26,7 +27,8 @@ export const api = {
       config.body = JSON.stringify(config.body)
     }
 
-    const response = await fetch(url, config)
+    const response = await fetch(url, config);
+    console.log("response", response)
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
